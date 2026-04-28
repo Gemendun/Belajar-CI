@@ -17,13 +17,15 @@ public function login()
         $username = $this->request->getVar('username');
         $password = $this->request->getVar('password');
 
-        $dataUser = ['username' => 'april', 'password' => '202cb962ac59075b964b07152d234b70', 'role' => 'admin']; // passw 123
+        $dataUser = ['username' => 'ndun', 'password' => '202cb962ac59075b964b07152d234b70', 'role' => 'admin']; // passw 123
 
         if ($username == $dataUser['username']) {
             if (md5($password) == $dataUser['password']) {
                 session()->set([
                     'username' => $dataUser['username'],
                     'role' => $dataUser['role'],
+                    'email'      => 'ndun@dsn.dinus.ac.id', 
+                    'login_time' => date('Y-m-d H:i:s'),
                     'isLoggedIn' => TRUE
                 ]);
 
