@@ -26,7 +26,7 @@
                         </div>
 
                         <div class="row mb-3">
-                            <div class="col-lg-3 col-md-4 label" style="color: #4154f1; font-weight: 600;">Email</div>
+                            <div class="col-lg-3 co" style="color: #4154f1; font-weight: 600;">Email</div>
                             <div class="col-lg-9 col-md-8 text-primary"><?= esc($email) ?></div>
                         </div>
 
@@ -52,4 +52,4 @@
     </div>
 </section>
 
-<?= $this->endSection() ?>
+<?= $this->endSection() ?>l-md-4 label
