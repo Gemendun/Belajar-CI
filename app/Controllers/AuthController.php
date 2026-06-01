@@ -4,47 +4,63 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use CodeIgniter\HTTP\ResponseInterface;
+use App\Models\UserModel; 
 
 class AuthController extends BaseController
 {
+    protected $userModel;
+
     function __construct()
-{
-    helper('form');
-}
-public function login()
-{
-    if ($this->request->getPost()) {
-        $username = $this->request->getVar('username');
-        $password = $this->request->getVar('password');
+    {
+        helper('form');
+        $this->userModel = new UserModel();
+    }
 
-        $dataUser = ['username' => 'ndun', 'password' => '202cb962ac59075b964b07152d234b70', 'role' => 'admin']; // passw 123
+    public function login()
+    {
+        if ($this->request->getPost()) {
+            $rules = [
+         'username' => 'required|min_length[3]',
+         'password' => 'required|min_length[3]|numeric',
+        ];
+        if ($this->validate($rules)) {
+            $username = $this->request->getVar('username');
+            $password = $this->request->getVar('password');
 
-        if ($username == $dataUser['username']) {
-            if (md5($password) == $dataUser['password']) {
-                session()->set([
-                    'username' => $dataUser['username'],
-                    'role' => $dataUser['role'],
-                    'email'      => 'ndun@dsn.dinus.ac.id', 
-                    'login_time' => date('Y-m-d H:i:s'),
-                    'isLoggedIn' => TRUE
-                ]);
+            $user = $this->userModel->where('username', $username)->first();
 
-                return redirect()->to(base_url('/'));
+            if ($user) {
+                if (password_verify($password, $user['password'])) {
+                    
+                    session()->set([
+                        'id'         => $user['id'],
+                        'username'   => $user['username'],
+                        'role'       => $user['role'],
+                        'isLoggedIn' => TRUE
+                    ]);
+
+                    return redirect()->to(base_url('/'));
+                } else {
+                    session()->setFlashdata('failed', 'Password Salah');
+                    return redirect()->back();
+                }
             } else {
-                session()->setFlashdata('failed', 'Username & Password Salah');
+                session()->setFlashdata('failed', 'Username Tidak Ditemukan');
                 return redirect()->back();
+                
             }
-        } else {
-            session()->setFlashdata('failed', 'Username Tidak Ditemukan');
+            } else {
+            session()->setFlashdata('failed', $this->validator->listErrors());
             return redirect()->back();
         }
-    } else {
-        return view('v_login');
+        } else {
+            return view('v_login');
+        }
+    } // <--- INI PENTING: Penutup fungsi login()
+
+    public function logout()
+    {
+        session()->destroy();
+        return redirect()->to('login');
     }
-}
-public function logout()
-{
-    session()->destroy();
-    return redirect()->to('login');
-}
-}
+} // <--- INI PENTING: Penutup class AuthController
