@@ -2,24 +2,24 @@
 
 namespace App\Filters;
 
+use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
-use CodeIgniter\Filters\FilterInterface;
 
 class Auth implements FilterInterface
 {
     public function before(RequestInterface $request, $arguments = null)
     {
-        // Do something here
-        if (!session()->has('isLoggedIn')) {
-    return redirect()->to(site_url('login'));
-}
+        // Jika user belum login, tendang ke halaman login
+        if (!session()->get('isLoggedIn')) {
+            return redirect()->to('/login');
+        }
+
+        // Jika sudah login tapi bukan admin, tendang ke home
+        if (session()->get('role') !== 'admin') {
+            return redirect()->to('/home');
+        }
     }
 
-    //--------------------------------------------------------------------
-
-    public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
-    {
-        // Do something here
-    }
+    public function after(RequestInterface $request, ResponseInterface $response, $arguments = null) {}
 }
